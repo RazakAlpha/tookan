@@ -1,0 +1,26 @@
+# ignore all files in the .cursor directory
+.cursor/
+# ignore all files in the .github directory
+.github/
+# ignore all files in the .vscode directory
+.vscode/
+# ignore all files in the .idea directory
+.idea/
+# ignore all files in the .env directory
+.env/
+# ignore all files in the .env.local directory
+.env.local/
+# ignore all files in the .env.development.local directory
+.env.development.local/
+# ignore node_modules directory
+node_modules/
+# ignore package-lock.json file
+package-lock.json
+# ignore yarn.lock file
+yarn.lock
+# ignore package-lock.json file
+package-lock.json
+# ignore yarn.lock file
+yarn.lock
+# ignore package-lock.json file
+package-lock.json
