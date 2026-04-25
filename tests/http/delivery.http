@@ -1,0 +1,125 @@
+# HTTP tests for delivery routes (VS Code REST Client extension)
+# Start the API first (`npm run dev` / `npm start`). Default port is 3001 if PORT is unset — change the host below if needed.
+
+@base = http://localhost:3000
+
+### Full dispatch (pickup + delivery)
+POST {{base}}/api/delivery/dispatch
+Content-Type: application/json
+
+{
+  "orderId": "HTTP-TEST-001",
+  "customer": {
+    "name": "Test Customer",
+    "phone": "+1-555-0100",
+    "address": "123 Main St, Atlanta, GA 30303",
+    "formattedAddress": "123 Main St, Atlanta, GA 30303, USA",
+    "addressLine1": "123 Main St",
+    "city": "Atlanta",
+    "state": "GA",
+    "postalCode": "30303",
+    "country": "US",
+    "latitude": 33.749,
+    "longitude": -84.388,
+    "placeId": "mock_1"
+  },
+  "pickup": {
+    "name": "Atlanta Downtown Store",
+    "address": "100 Store St, Atlanta, GA 30303",
+    "latitude": 33.749,
+    "longitude": -84.388
+  },
+  "notes": "Ring doorbell",
+  "store": {
+    "id": "store_1",
+    "latitude": 33.749,
+    "longitude": -84.388,
+    "radiusKm": 15
+  },
+  "options": {
+    "skipValidation": false,
+    "skipServiceArea": false,
+    "overrideServiceArea": false
+  }
+}
+
+### Delivery only
+POST {{base}}/api/delivery/dispatch/delivery-only
+Content-Type: application/json
+
+{
+  "orderId": "HTTP-TEST-DO-001",
+  "customer": {
+    "name": "Test Customer",
+    "phone": "+1-555-0100",
+    "formattedAddress": "123 Main St, Atlanta, GA 30303, USA",
+    "latitude": 33.749,
+    "longitude": -84.388
+  },
+  "notes": "Leave at door",
+  "store": {
+    "id": "store_1",
+    "latitude": 33.749,
+    "longitude": -84.388,
+    "radiusKm": 15
+  }
+}
+
+### Pickup only
+POST {{base}}/api/delivery/dispatch/pickup-only
+Content-Type: application/json
+
+{
+  "orderId": "HTTP-TEST-PO-001",
+  "pickup": {
+    "name": "Atlanta Downtown Store",
+    "address": "100 Store St, Atlanta, GA 30303",
+    "latitude": 33.749,
+    "longitude": -84.388
+  },
+  "notes": "Fragile",
+  "scheduledAt": "04/20/2026 14:30"
+}
+
+### Preview provider payload (no dispatch)
+POST {{base}}/api/delivery/dispatch/preview
+Content-Type: application/json
+
+{
+  "orderId": "HTTP-PREVIEW-001",
+  "customer": {
+    "name": "Preview User",
+    "phone": "+1-555-0199",
+    "formattedAddress": "123 Main St, Atlanta, GA 30303, USA",
+    "latitude": 33.749,
+    "longitude": -84.388
+  },
+  "pickup": {
+    "name": "Store",
+    "address": "100 Store St, Atlanta, GA 30303",
+    "latitude": 33.749,
+    "longitude": -84.388
+  },
+  "notes": "Preview only"
+}
+
+### Task status — replace MOCK-… with taskId from a dispatch response (mock uses MOCK-1001, MOCK-1002, …)
+GET {{base}}/api/delivery/task/MOCK-1001
+
+### Task status (admin: may include raw provider fields when supported)
+GET {{base}}/api/delivery/task/MOCK-1001
+x-admin-mode: true
+
+### Cancel task — replace task id with one returned from dispatch
+POST {{base}}/api/delivery/task/MOCK-1001/cancel
+Content-Type: application/json
+
+{}
+
+### Validation error sample (400) — missing customer on full dispatch
+POST {{base}}/api/delivery/dispatch
+Content-Type: application/json
+
+{
+  "pickup": { "address": "100 Store St, Atlanta, GA 30303" }
+}

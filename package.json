@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Delivery dispatch plugin with address autocomplete, validation, service area checking, and Tookan integration",
   "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",

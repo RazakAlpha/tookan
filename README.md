@@ -10,41 +10,39 @@ Drop this into your existing ordering app. No refactoring needed.
 
 ```
 ├── env.config                         COPY THIS TO .env — ready to run, no keys needed
-├── package.json                       dependencies: express, cors, dotenv
+├── package.json                       scripts: start, dev, test
+├── Dockerfile                         production image (Node 22 Alpine)
 │
-├── delivery-plugin/                   THE PLUGIN (copy this whole folder into your project)
-│   ├── server.js                      starts the server
-│   ├── app.js                         wires routes + middleware together
-│   ├── config/
-│   │   └── index.js                   reads .env, exports all settings
+├── src/                               APPLICATION ROOT
+│   ├── server.js                      starts the HTTP server
+│   ├── app.js                         Express app + routes + middleware
+│   ├── config/index.js                reads .env, exports all settings
 │   ├── middleware/
 │   │   ├── rateLimiter.js             blocks too many requests per IP
 │   │   └── validate.js                rejects bad query params / body fields
 │   ├── utils/
 │   │   ├── geo.js                     haversine distance + point-in-polygon math
-│   │   └── response.js               wraps every response in { success, data/error }
-│   │
+│   │   └── response.js                wraps every response in { success, data/error }
 │   ├── address/                       ADDRESS MODULE — autocomplete, validation, service area
 │   │   ├── routes/addressRoutes.js
 │   │   ├── controllers/addressController.js
 │   │   ├── services/addressService.js
 │   │   └── providers/
 │   │       ├── index.js               factory — picks provider from config
-│   │       ├── base/AddressProvider.js interface contract
+│   │       ├── base/AddressProvider.js
 │   │       ├── google/                Google Places API
 │   │       ├── mapbox/                Mapbox Geocoding API
 │   │       └── mock/                  fake addresses for testing (no API key)
-│   │
 │   └── delivery/                      DELIVERY MODULE — dispatch to Tookan
 │       ├── routes/deliveryRoutes.js
 │       ├── controllers/deliveryController.js
-│       ├── services/deliveryService.js the orchestrator — validate → check area → dispatch
+│       ├── services/deliveryService.js
 │       ├── validators/dispatchValidator.js
 │       └── providers/
-│           ├── index.js               factory — picks provider from config
-│           ├── base/DeliveryProvider.js interface contract
-│           ├── tookan/TookanProvider.js calls Tookan API v2
-│           └── mock/                  fake dispatch for testing (no API key)
+│           ├── index.js
+│           ├── base/DeliveryProvider.js
+│           ├── tookan/TookanProvider.js
+│           └── mock/
 │
 ├── database/
 │   └── 001_delivery_address_schema.sql  run this against your DB
@@ -59,9 +57,9 @@ Drop this into your existing ordering app. No refactoring needed.
 
 ## Setup — 4 Steps
 
-### 1. Copy the plugin into your project
+### 1. Use this repo as a service or copy `src/` into your app
 
-Copy the `delivery-plugin` folder into your project. Put it wherever makes sense — `src/delivery-plugin/`, `lib/delivery-plugin/`, or at root level.
+Run it from this repository as a standalone API, or copy the `src/` tree into your project (for example `src/` or `lib/delivery/`) and adjust `require` paths.
 
 ### 2. Create your .env file
 
@@ -69,33 +67,52 @@ Copy the `delivery-plugin` folder into your project. Put it wherever makes sense
 cp env.config .env
 ```
 
+On Windows PowerShell: `Copy-Item env.config .env`
+
 That's it. The defaults use mock providers so everything works immediately with no API keys.
 
 ### 3. Install dependencies
 
 ```bash
-npm install express cors dotenv
+npm install
 ```
 
-If you already have Express, you already have these.
+### 4. Run the server or mount routes
 
-### 4. Mount the routes in your app
+**Standalone (this repo):**
 
-If you're running the plugin as a standalone server:
 ```bash
-node delivery-plugin/server.js
+npm start
 ```
 
-If you're adding it to your existing Express app:
+Development with auto-restart:
+
+```bash
+npm run dev
+```
+
+**Mount in an existing Express app:**
+
 ```javascript
-const addressRoutes = require("./delivery-plugin/address/routes/addressRoutes");
-const deliveryRoutes = require("./delivery-plugin/delivery/routes/deliveryRoutes");
+const addressRoutes = require("./src/address/routes/addressRoutes");
+const deliveryRoutes = require("./src/delivery/routes/deliveryRoutes");
 
 app.use("/api/address", addressRoutes);
 app.use("/api/delivery", deliveryRoutes);
 ```
 
 Test it: `http://localhost:3001/api/health`
+
+### Deploy (Docker)
+
+From the repository root:
+
+```bash
+docker build -t delivery-plugin .
+docker run --rm -p 3001:3001 --env-file .env delivery-plugin
+```
+
+The container listens on `PORT` (default **3001**). Set `PORT` in `.env` or `-e PORT=8080` if your host expects a different port.
 
 ---
 
@@ -104,7 +121,7 @@ Test it: `http://localhost:3001/api/health`
 After setup, you call one function from your order flow:
 
 ```javascript
-const { getDeliveryService } = require("./delivery-plugin/delivery/services/deliveryService");
+const { getDeliveryService } = require("./src/delivery/services/deliveryService");
 const deliveryService = getDeliveryService();
 
 // Call this after the customer places an order
@@ -397,8 +414,13 @@ fleetId: "70441",  // the driver's fleet_id from Tookan
 ## Tests
 
 ```bash
-npm install --save-dev jest supertest
 npm test
 ```
 
-No API keys needed — tests use mock providers.
+Jest and Supertest are already devDependencies. No API keys needed — tests use mock providers.
+
+Run a single file:
+
+```bash
+npm test -- api.test.js
+```

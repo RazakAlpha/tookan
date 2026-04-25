@@ -1,0 +1,45 @@
+# create http tests for the address module using the rest client extension
+
+### Autocomplete
+GET http://localhost:3000/api/address/autocomplete?q=123 Main
+
+###
+GET http://localhost:3000/api/address/autocomplete?q=123 Main HTTP/1.1
+### Place
+GET http://localhost:3000/api/address/place/123 Main
+Content-Type: application/json
+
+{
+    "address": "123 Main St, Atlanta, GA 30303"
+}
+### Validate
+POST http://localhost:3000/api/address/validate
+Content-Type: application/json
+
+{
+    "address": "123 Main St, Atlanta, GA 30303"
+}
+### Reverse Geocode
+POST http://localhost:3000/api/address/reverse-geocode
+Content-Type: application/json
+
+{
+    "latitude": 33.749,
+    "longitude": -84.388
+}
+### Service Check
+POST http://localhost:3000/api/address/service-check
+Content-Type: application/json
+
+{
+    "address": {
+        "latitude": 33.749,
+        "longitude": -84.388
+    },
+    "store": {
+        "id": "s1",
+        "latitude": 33.749,
+        "longitude": -84.388,
+        "radiusKm": 10
+    }
+}
