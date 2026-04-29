@@ -75,4 +75,127 @@ router.post(
   deliveryController.cancelTask
 );
 
+// ─── Extended provider operations (Tookan slugs — see tookan_api_guide.md) ───
+// Static paths before :jobId / :fleetId
+
+router.post(
+  "/tasks/bulk",
+  dispatchLimiter,
+  deliveryController.createMultipleTasks
+);
+
+router.post(
+  "/tasks/search",
+  dispatchLimiter,
+  deliveryController.queryTasks
+);
+
+router.post(
+  "/tasks/details",
+  dispatchLimiter,
+  deliveryController.getJobDetails
+);
+
+router.post(
+  "/tasks/by-order-id",
+  dispatchLimiter,
+  deliveryController.getJobDetailsByOrderId
+);
+
+router.post(
+  "/tasks/edit-multiple",
+  dispatchLimiter,
+  deliveryController.editMultipleTasks
+);
+
+router.post(
+  "/tasks/reassign-open",
+  dispatchLimiter,
+  deliveryController.reassignOpenTasks
+);
+
+router.post(
+  "/tasks/assign-fleet",
+  dispatchLimiter,
+  deliveryController.assignFleetToTask
+);
+
+router.post(
+  "/tasks/assign-fleet-related",
+  dispatchLimiter,
+  deliveryController.assignFleetToRelatedTasks
+);
+
+router.post(
+  "/agents",
+  dispatchLimiter,
+  deliveryController.addAgent
+);
+
+router.post(
+  "/agents/search",
+  dispatchLimiter,
+  deliveryController.queryFleets
+);
+
+router.post(
+  "/agents/block-status",
+  dispatchLimiter,
+  deliveryController.blockAndUnblockAgent
+);
+
+router.post(
+  "/teams",
+  dispatchLimiter,
+  deliveryController.createTeam
+);
+
+router.post(
+  "/teams/list",
+  dispatchLimiter,
+  deliveryController.listTeams
+);
+
+router.patch(
+  "/tasks/:jobId",
+  dispatchLimiter,
+  deliveryController.editTask
+);
+
+router.delete(
+  "/tasks/:jobId",
+  dispatchLimiter,
+  deliveryController.deleteTask
+);
+
+router.post(
+  "/tasks/:jobId/status",
+  dispatchLimiter,
+  deliveryController.updateTaskStatus
+);
+
+router.post(
+  "/tasks/:jobId/assign",
+  dispatchLimiter,
+  deliveryController.assignTask
+);
+
+router.post(
+  "/tasks/:jobId/auto-assign",
+  dispatchLimiter,
+  deliveryController.reAutoassignTask
+);
+
+router.patch(
+  "/agents/:fleetId",
+  dispatchLimiter,
+  deliveryController.editAgent
+);
+
+router.delete(
+  "/agents/:fleetId",
+  dispatchLimiter,
+  deliveryController.deleteFleetAccount
+);
+
 module.exports = router;

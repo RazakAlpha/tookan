@@ -405,9 +405,31 @@ fleetId: "70441",  // the driver's fleet_id from Tookan
 | POST | `/api/delivery/dispatch/delivery-only` | Delivery task only (no pickup) |
 | POST | `/api/delivery/dispatch/pickup-only` | Pickup task only |
 | POST | `/api/delivery/dispatch/preview` | See Tookan payload without sending |
-| GET | `/api/delivery/task/:taskId` | Check task status |
-| POST | `/api/delivery/task/:taskId/cancel` | Cancel a task |
+| GET | `/api/delivery/task/:taskId` | Check task status (Tookan uses `get_job_details` internally) |
+| POST | `/api/delivery/task/:taskId/cancel` | Cancel a task (`cancel_task`) |
+| POST | `/api/delivery/tasks/bulk` | `create_multiple_tasks` |
+| POST | `/api/delivery/tasks/search` | `get_all_tasks` (filters in JSON body; max 31-day window upstream) |
+| POST | `/api/delivery/tasks/details` | `get_job_details` — body `{ "jobIds": [ … ], … }` |
+| POST | `/api/delivery/tasks/by-order-id` | `get_job_details_by_order_id` — body `{ "orderIds": [ … ], … }` |
+| PATCH | `/api/delivery/tasks/:jobId` | `edit_task` |
+| POST | `/api/delivery/tasks/edit-multiple` | `edit_multiple_tasks` |
+| DELETE | `/api/delivery/tasks/:jobId` | `delete_task` (distinct from cancel) |
+| POST | `/api/delivery/tasks/:jobId/status` | `update_task_status` — body `{ "job_status": "2" }` |
+| POST | `/api/delivery/tasks/:jobId/assign` | `assign_task` |
+| POST | `/api/delivery/tasks/:jobId/auto-assign` | `re_autoassign_task` |
+| POST | `/api/delivery/tasks/reassign-open` | `reassign_open_tasks` |
+| POST | `/api/delivery/tasks/assign-fleet` | `assign_fleet_to_task` |
+| POST | `/api/delivery/tasks/assign-fleet-related` | `assign_fleet_to_related_tasks` |
+| POST | `/api/delivery/agents` | `add_agent` |
+| POST | `/api/delivery/agents/search` | `get_all_fleets` |
+| PATCH | `/api/delivery/agents/:fleetId` | `edit_agent` |
+| DELETE | `/api/delivery/agents/:fleetId` | `delete_fleet_account` |
+| POST | `/api/delivery/agents/block-status` | `block_and_unblock_agent` |
+| POST | `/api/delivery/teams` | `create_team` |
+| POST | `/api/delivery/teams/list` | `view_all_team_only` |
 | GET | `/api/health` | Server status |
+
+Payload shapes match [`tookan_api_guide.md`](tookan_api_guide.md); send Tookan field names (lower snake_case / quoted strings as in that doc).
 
 ---
 

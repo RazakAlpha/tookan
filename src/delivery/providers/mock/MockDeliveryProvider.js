@@ -75,6 +75,119 @@ class MockDeliveryProvider extends DeliveryProvider {
       metadata: payload.metadata || {},
     };
   }
+
+  _mockOk(data = {}) {
+    return { status: 200, message: "Successful", data, simulated: true };
+  }
+
+  async createMultipleTasks(body) {
+    return this._mockOk({
+      pickup_job_id: "MOCK-P-BULK",
+      delivery_job_id: "MOCK-D-BULK",
+      job_id: "MOCK-BULK-1",
+      ...body,
+    });
+  }
+
+  async getAllTasks(filters = {}) {
+    return this._mockOk({
+      tasks: [],
+      requested_page: filters.requested_page || 1,
+      total_page_count: 0,
+    });
+  }
+
+  async getJobDetails(jobIds, options = {}) {
+    const ids = Array.isArray(jobIds) ? jobIds : [jobIds];
+    return this._mockOk(
+      ids.map((id) => ({
+        job_id: id,
+        job_status: 0,
+        fleet_name: "Mock Agent",
+        fleet_phone: "+15550100",
+        tracking_link: `https://mock-tracking.local/track/${id}`,
+        customer_username: "Mock Customer",
+        job_description: "mock task",
+      }))
+    );
+  }
+
+  async getJobDetailsByOrderId(orderIds, options = {}) {
+    const ids = Array.isArray(orderIds) ? orderIds : [orderIds];
+    return this._mockOk(
+      ids.map((order_id, i) => ({
+        job_id: `MOCK-J-${i}`,
+        order_id,
+        job_status: 0,
+      }))
+    );
+  }
+
+  async editTask(body) {
+    return this._mockOk({ job_id: body.job_id, updated: true });
+  }
+
+  async editMultipleTasks(body) {
+    return this._mockOk({ updated: true, pickups: body.pickups?.length ?? 0, deliveries: body.deliveries?.length ?? 0 });
+  }
+
+  async deleteTask(jobId) {
+    return this._mockOk({ job_id: jobId, deleted: true });
+  }
+
+  async updateTaskStatus(jobId, jobStatus) {
+    return this._mockOk({ job_id: jobId, job_status: jobStatus });
+  }
+
+  async assignTask(body) {
+    return this._mockOk({ assigned: true, ...body });
+  }
+
+  async reassignOpenTasks(body) {
+    return this._mockOk({ reassigned: true, job_ids: body.job_ids });
+  }
+
+  async reAutoassignTask(jobId) {
+    return this._mockOk({ job_id: jobId, reassigned: true });
+  }
+
+  async assignFleetToTask(body) {
+    return this._mockOk({ assigned: true, ...body });
+  }
+
+  async assignFleetToRelatedTasks(body) {
+    return this._mockOk({ assigned: true, ...body });
+  }
+
+  async addAgent(body) {
+    return this._mockOk({ fleet_id: "MOCK-FLEET-1", ...body });
+  }
+
+  async getAllFleets(filters = {}) {
+    return this._mockOk([
+      { fleet_id: 1, username: "mock_agent", status: 0 },
+    ]);
+  }
+
+  async editAgent(body) {
+    return this._mockOk({ fleet_id: body.fleet_id, updated: true });
+  }
+
+  async deleteFleetAccount(fleetId) {
+    return this._mockOk({ fleet_id: fleetId, deleted: true });
+  }
+
+  async blockAndUnblockAgent(body) {
+    return this._mockOk({ ok: true, ...body });
+  }
+
+  async createTeam(body) {
+    return this._mockOk({ team_id: "MOCK-TEAM-1", ...body });
+  }
+
+  async viewAllTeams(body = {}) {
+    return this._mockOk([{ team_id: 1, team_name: "Mock Team" }]);
+  }
 }
 
 module.exports = MockDeliveryProvider;

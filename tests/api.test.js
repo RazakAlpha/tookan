@@ -181,6 +181,34 @@ describe("Delivery API Routes", () => {
     expect(res.body.data.cancelled).toBe(true);
   });
 
+  test("POST /api/delivery/tasks/search proxies get_all_tasks", async () => {
+    const res = await request(app)
+      .post("/api/delivery/tasks/search")
+      .send({
+        start_date: "2026-01-01",
+        end_date: "2026-01-02",
+        job_status: "1",
+      });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.status).toBe(200);
+    expect(res.body.data.data.tasks).toEqual([]);
+  });
+
+  test("POST /api/delivery/tasks/details requires jobIds", async () => {
+    const res = await request(app).post("/api/delivery/tasks/details").send({});
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  test("POST /api/delivery/tasks/details returns jobs array", async () => {
+    const res = await request(app).post("/api/delivery/tasks/details").send({ jobIds: ["5145"] });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data.data)).toBe(true);
+    expect(res.body.data.data[0].job_id).toBe("5145");
+  });
+
   test("404 for unknown route", async () => {
     const res = await request(app).get("/api/nonexistent");
     expect(res.status).toBe(404);

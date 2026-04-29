@@ -99,6 +99,18 @@ describe("DeliveryService with MockProvider", () => {
     expect(preview).toHaveProperty("customer_address");
     expect(preview).toHaveProperty("latitude");
   });
+
+  test("queryTasks delegates to mock provider", async () => {
+    const out = await service.queryTasks({ start_date: "2026-01-01", end_date: "2026-01-02" });
+    expect(out.status).toBe(200);
+    expect(out.data.tasks).toEqual([]);
+  });
+
+  test("getJobDetails delegates to mock provider", async () => {
+    const out = await service.getJobDetails(["999"]);
+    expect(out.status).toBe(200);
+    expect(out.data[0].job_id).toBe("999");
+  });
 });
 
 describe("TookanProvider.buildProviderPayload", () => {

@@ -154,14 +154,135 @@ class TookanProvider extends DeliveryProvider {
   }
 
   /**
-   * Get task status from Tookan
+   * Normalize job_ids for Tookan (numbers preferred when numeric).
+   */
+  _normalizeJobIds(jobIds) {
+    const arr = Array.isArray(jobIds) ? jobIds : [jobIds];
+    return arr.map((id) => {
+      const n = Number(id);
+      return Number.isFinite(n) ? n : id;
+    });
+  }
+
+  /**
+   * POST /get_job_details — one or more tasks (see tookan_api_guide.md).
+   */
+  async getJobDetails(jobIds, options = {}) {
+    const ids = this._normalizeJobIds(jobIds);
+    const body = {
+      job_ids: ids,
+      include_task_history: options.includeTaskHistory ?? 0,
+      job_additional_info: options.jobAdditionalInfo ?? 1,
+      include_job_report: options.includeJobReport ?? 0,
+    };
+    return this._request("/get_job_details", body);
+  }
+
+  /**
+   * POST /get_job_details_by_order_id
+   */
+  async getJobDetailsByOrderId(orderIds, options = {}) {
+    const ids = Array.isArray(orderIds) ? orderIds : [orderIds];
+    const body = {
+      order_ids: ids.map(String),
+      include_task_history: options.includeTaskHistory ?? 0,
+    };
+    return this._request("/get_job_details_by_order_id", body);
+  }
+
+  /**
+   * POST /get_all_tasks — filters (31-day window per Tookan docs).
+   */
+  async getAllTasks(filters = {}) {
+    return this._request("/get_all_tasks", filters);
+  }
+
+  /**
+   * POST /create_multiple_tasks
+   */
+  async createMultipleTasks(body) {
+    return this._request("/create_multiple_tasks", body);
+  }
+
+  async editTask(body) {
+    return this._request("/edit_task", body);
+  }
+
+  async editMultipleTasks(body) {
+    return this._request("/edit_multiple_tasks", body);
+  }
+
+  async deleteTask(jobId) {
+    return this._request("/delete_task", { job_id: String(jobId) });
+  }
+
+  async updateTaskStatus(jobId, jobStatus) {
+    return this._request("/update_task_status", {
+      job_id: String(jobId),
+      job_status: String(jobStatus),
+    });
+  }
+
+  async assignTask(body) {
+    return this._request("/assign_task", body);
+  }
+
+  async reassignOpenTasks(body) {
+    return this._request("/reassign_open_tasks", body);
+  }
+
+  async reAutoassignTask(jobId) {
+    return this._request("/re_autoassign_task", { job_id: String(jobId) });
+  }
+
+  async assignFleetToTask(body) {
+    return this._request("/assign_fleet_to_task", body);
+  }
+
+  async assignFleetToRelatedTasks(body) {
+    return this._request("/assign_fleet_to_related_tasks", body);
+  }
+
+  async addAgent(body) {
+    return this._request("/add_agent", body);
+  }
+
+  async getAllFleets(filters = {}) {
+    return this._request("/get_all_fleets", filters);
+  }
+
+  async editAgent(body) {
+    return this._request("/edit_agent", body);
+  }
+
+  async deleteFleetAccount(fleetId) {
+    return this._request("/delete_fleet_account", { fleet_id: String(fleetId) });
+  }
+
+  async blockAndUnblockAgent(body) {
+    return this._request("/block_and_unblock_agent", body);
+  }
+
+  async createTeam(body) {
+    return this._request("/create_team", body);
+  }
+
+  async viewAllTeams(body = {}) {
+    return this._request("/view_all_team_only", body);
+  }
+
+  /**
+   * Get task status from Tookan (uses get_job_details).
    */
   async getTaskStatus(taskId) {
-    const data = await this._request("/get_task_details", {
-      job_id: taskId,
+    const data = await this.getJobDetails([taskId], {
+      jobAdditionalInfo: 1,
+      includeTaskHistory: 0,
+      includeJobReport: 0,
     });
 
-    const taskData = data.data?.[0] || {};
+    const rows = Array.isArray(data.data) ? data.data : [];
+    const taskData = rows[0] || {};
 
     return {
       taskId: taskData.job_id?.toString(),

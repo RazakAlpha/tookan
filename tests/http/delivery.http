@@ -123,3 +123,32 @@ Content-Type: application/json
 {
   "pickup": { "address": "100 Store St, Atlanta, GA 30303" }
 }
+
+### Extended Tookan ops — search tasks (get_all_tasks body per guide)
+POST {{base}}/api/delivery/tasks/search
+Content-Type: application/json
+
+{
+  "job_status": "1",
+  "start_date": "2026-04-01",
+  "end_date": "2026-04-02",
+  "is_pagination": 1,
+  "requested_page": 1
+}
+
+### Job details — get_job_details (camelCase jobIds mapped server-side)
+POST {{base}}/api/delivery/tasks/details
+Content-Type: application/json
+
+{
+  "jobIds": ["5145"],
+  "includeTaskHistory": 0,
+  "jobAdditionalInfo": 1,
+  "includeJobReport": 0
+}
+
+### Teams list — view_all_team_only
+POST {{base}}/api/delivery/teams/list
+Content-Type: application/json
+
+{}

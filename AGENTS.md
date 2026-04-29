@@ -30,6 +30,7 @@
 ## Integration hook
 
 - **`getDeliveryService().createDispatch(payload, options)`** — see [`README.md`](README.md) for payload and blocked responses. Tookan **`meta_data` `label`** values must match the dashboard template exactly.
+- Additional Tookan REST operations map under **`/api/delivery/tasks/*`**, **`/api/delivery/agents/*`**, **`/api/delivery/teams/*`** — see [`README.md`](README.md) API table and [`tookan_api_guide.md`](tookan_api_guide.md) for request bodies (same JSON fields as upstream).
 
 ## Housekeeping
 

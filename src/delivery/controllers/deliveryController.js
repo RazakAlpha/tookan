@@ -4,6 +4,16 @@
 const { getDeliveryService } = require("../services/deliveryService");
 const { success, error } = require("../../utils/response");
 
+function stripRawIfNeeded(req, obj) {
+  if (!obj || typeof obj !== "object") return obj;
+  const isAdmin = req.headers["x-admin-mode"] === "true";
+  if (!isAdmin && Object.prototype.hasOwnProperty.call(obj, "raw")) {
+    const { raw, ...rest } = obj;
+    return rest;
+  }
+  return obj;
+}
+
 const deliveryController = {
   /**
    * POST /api/delivery/dispatch
@@ -155,10 +165,7 @@ const deliveryController = {
       const service = getDeliveryService();
       const result = await service.getTaskStatus(taskId);
 
-      const isAdmin = req.headers["x-admin-mode"] === "true";
-      if (!isAdmin && result.raw) delete result.raw;
-
-      res.json(success(result));
+      res.json(success(stripRawIfNeeded(req, result)));
     } catch (err) {
       console.error("[DeliveryController] getTaskStatus error:", err);
       res.status(500).json(error("Failed to get task status", "TASK_STATUS_ERROR"));
@@ -183,6 +190,289 @@ const deliveryController = {
     } catch (err) {
       console.error("[DeliveryController] cancelTask error:", err);
       res.status(500).json(error("Failed to cancel task", "CANCEL_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/bulk — create_multiple_tasks
+   */
+  async createMultipleTasks(req, res) {
+    try {
+      const result = await getDeliveryService().createMultipleTasks(req.body || {});
+      res.status(201).json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] createMultipleTasks error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/search — get_all_tasks
+   */
+  async queryTasks(req, res) {
+    try {
+      const result = await getDeliveryService().queryTasks(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] queryTasks error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/details — get_job_details
+   * Body: { jobIds: string[]|number[], includeTaskHistory?, jobAdditionalInfo?, includeJobReport? }
+   */
+  async getJobDetails(req, res) {
+    try {
+      const { jobIds, ...opts } = req.body || {};
+      if (!jobIds || !Array.isArray(jobIds) || jobIds.length === 0) {
+        return res.status(400).json(error("jobIds array is required", "VALIDATION_ERROR"));
+      }
+      const result = await getDeliveryService().getJobDetails(jobIds, opts);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] getJobDetails error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/by-order-id — get_job_details_by_order_id
+   */
+  async getJobDetailsByOrderId(req, res) {
+    try {
+      const { orderIds, ...opts } = req.body || {};
+      if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+        return res.status(400).json(error("orderIds array is required", "VALIDATION_ERROR"));
+      }
+      const result = await getDeliveryService().getJobDetailsByOrderId(orderIds, opts);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] getJobDetailsByOrderId error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * PATCH /api/delivery/tasks/:jobId — edit_task
+   */
+  async editTask(req, res) {
+    try {
+      const { jobId } = req.params;
+      const body = { ...(req.body || {}), job_id: jobId };
+      const result = await getDeliveryService().editTask(body);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] editTask error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/edit-multiple — edit_multiple_tasks
+   */
+  async editMultipleTasks(req, res) {
+    try {
+      const result = await getDeliveryService().editMultipleTasks(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] editMultipleTasks error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * DELETE /api/delivery/tasks/:jobId — delete_task
+   */
+  async deleteTask(req, res) {
+    try {
+      const { jobId } = req.params;
+      const result = await getDeliveryService().deleteTask(jobId);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] deleteTask error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/:jobId/status — update_task_status
+   */
+  async updateTaskStatus(req, res) {
+    try {
+      const { jobId } = req.params;
+      const jobStatus = req.body?.job_status ?? req.body?.jobStatus;
+      if (jobStatus === undefined || jobStatus === null || jobStatus === "") {
+        return res.status(400).json(error("job_status is required in body", "VALIDATION_ERROR"));
+      }
+      const result = await getDeliveryService().updateTaskStatus(jobId, jobStatus);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] updateTaskStatus error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/:jobId/assign — assign_task (merge job_id from URL)
+   */
+  async assignTask(req, res) {
+    try {
+      const { jobId } = req.params;
+      const body = { ...(req.body || {}), job_id: jobId };
+      const result = await getDeliveryService().assignTask(body);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] assignTask error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/:jobId/auto-assign — re_autoassign_task
+   */
+  async reAutoassignTask(req, res) {
+    try {
+      const { jobId } = req.params;
+      const result = await getDeliveryService().reAutoassignTask(jobId);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] reAutoassignTask error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/reassign-open — reassign_open_tasks
+   */
+  async reassignOpenTasks(req, res) {
+    try {
+      const result = await getDeliveryService().reassignOpenTasks(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] reassignOpenTasks error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/assign-fleet — assign_fleet_to_task
+   */
+  async assignFleetToTask(req, res) {
+    try {
+      const result = await getDeliveryService().assignFleetToTask(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] assignFleetToTask error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/tasks/assign-fleet-related — assign_fleet_to_related_tasks
+   */
+  async assignFleetToRelatedTasks(req, res) {
+    try {
+      const result = await getDeliveryService().assignFleetToRelatedTasks(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] assignFleetToRelatedTasks error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/agents — add_agent
+   */
+  async addAgent(req, res) {
+    try {
+      const result = await getDeliveryService().addAgent(req.body || {});
+      res.status(201).json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] addAgent error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/agents/search — get_all_fleets
+   */
+  async queryFleets(req, res) {
+    try {
+      const result = await getDeliveryService().queryFleets(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] queryFleets error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * PATCH /api/delivery/agents/:fleetId — edit_agent
+   */
+  async editAgent(req, res) {
+    try {
+      const { fleetId } = req.params;
+      const body = { ...(req.body || {}), fleet_id: fleetId };
+      const result = await getDeliveryService().editAgent(body);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] editAgent error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * DELETE /api/delivery/agents/:fleetId — delete_fleet_account
+   */
+  async deleteFleetAccount(req, res) {
+    try {
+      const { fleetId } = req.params;
+      const result = await getDeliveryService().deleteFleetAccount(fleetId);
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] deleteFleetAccount error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/agents/block-status — block_and_unblock_agent
+   */
+  async blockAndUnblockAgent(req, res) {
+    try {
+      const result = await getDeliveryService().blockAndUnblockAgent(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] blockAndUnblockAgent error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/teams — create_team
+   */
+  async createTeam(req, res) {
+    try {
+      const result = await getDeliveryService().createTeam(req.body || {});
+      res.status(201).json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] createTeam error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
+    }
+  },
+
+  /**
+   * POST /api/delivery/teams/list — view_all_team_only
+   */
+  async listTeams(req, res) {
+    try {
+      const result = await getDeliveryService().listTeams(req.body || {});
+      res.json(success(result));
+    } catch (err) {
+      console.error("[DeliveryController] listTeams error:", err);
+      res.status(500).json(error(err.message || "Provider error", "DELIVERY_PROVIDER_ERROR"));
     }
   },
 
