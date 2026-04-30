@@ -145,6 +145,12 @@ router.post(
 );
 
 router.post(
+  "/agents/reassign-open-tasks",
+  dispatchLimiter,
+  deliveryController.reassignOpenTasks
+);
+
+router.post(
   "/teams",
   dispatchLimiter,
   deliveryController.createTeam

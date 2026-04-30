@@ -344,7 +344,9 @@ const deliveryController = {
   },
 
   /**
-   * POST /api/delivery/tasks/reassign-open — reassign_open_tasks
+   * POST /api/delivery/tasks/reassign-open
+   * POST /api/delivery/agents/reassign-open-tasks
+   * Tookan: reassign_open_tasks — body: user_id, team_id, fleet_id, job_ids[] (api_key from env)
    */
   async reassignOpenTasks(req, res) {
     try {

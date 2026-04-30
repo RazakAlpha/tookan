@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1777349570543" clover="3.2.0">
-  <project timestamp="1777349570543" name="All files">
-    <metrics statements="948" coveredstatements="445" conditionals="883" coveredconditionals="346" methods="224" coveredmethods="72" elements="2055" coveredelements="863" complexity="0" loc="948" ncloc="948" packages="20" files="23" classes="23"/>
+<coverage generated="1777513350019" clover="3.2.0">
+  <project timestamp="1777513350019" name="All files">
+    <metrics statements="949" coveredstatements="446" conditionals="883" coveredconditionals="346" methods="224" coveredmethods="72" elements="2056" coveredelements="864" complexity="0" loc="949" ncloc="949" packages="20" files="23" classes="23"/>
     <package name="src">
       <metrics statements="31" coveredstatements="18" conditionals="4" coveredconditionals="2" methods="6" coveredmethods="2"/>
       <file name="app.js" path="D:\dev\razac_tookan\razac_tookan\src\app.js">
@@ -496,67 +496,67 @@
         <line num="339" count="0" type="stmt"/>
         <line num="341" count="0" type="stmt"/>
         <line num="342" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="350" count="0" type="stmt"/>
-        <line num="351" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="352" count="0" type="stmt"/>
+        <line num="353" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="354" count="0" type="stmt"/>
-        <line num="355" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="363" count="0" type="stmt"/>
-        <line num="364" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="356" count="0" type="stmt"/>
+        <line num="357" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="365" count="0" type="stmt"/>
+        <line num="366" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="367" count="0" type="stmt"/>
-        <line num="368" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="376" count="0" type="stmt"/>
-        <line num="377" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="369" count="0" type="stmt"/>
+        <line num="370" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="378" count="0" type="stmt"/>
+        <line num="379" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="380" count="0" type="stmt"/>
-        <line num="381" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="389" count="0" type="stmt"/>
-        <line num="390" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="382" count="0" type="stmt"/>
+        <line num="383" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="391" count="0" type="stmt"/>
+        <line num="392" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="393" count="0" type="stmt"/>
-        <line num="394" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="402" count="0" type="stmt"/>
-        <line num="403" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="395" count="0" type="stmt"/>
+        <line num="396" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="404" count="0" type="stmt"/>
+        <line num="405" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="406" count="0" type="stmt"/>
-        <line num="407" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="415" count="0" type="stmt"/>
-        <line num="416" count="0" type="stmt"/>
-        <line num="417" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="408" count="0" type="stmt"/>
+        <line num="409" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="417" count="0" type="stmt"/>
         <line num="418" count="0" type="stmt"/>
-        <line num="419" count="0" type="stmt"/>
+        <line num="419" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="420" count="0" type="stmt"/>
         <line num="421" count="0" type="stmt"/>
-        <line num="422" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="430" count="0" type="stmt"/>
-        <line num="431" count="0" type="stmt"/>
+        <line num="423" count="0" type="stmt"/>
+        <line num="424" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="432" count="0" type="stmt"/>
         <line num="433" count="0" type="stmt"/>
+        <line num="434" count="0" type="stmt"/>
         <line num="435" count="0" type="stmt"/>
-        <line num="436" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="444" count="0" type="stmt"/>
-        <line num="445" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="437" count="0" type="stmt"/>
+        <line num="438" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="446" count="0" type="stmt"/>
+        <line num="447" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="448" count="0" type="stmt"/>
-        <line num="449" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="457" count="0" type="stmt"/>
-        <line num="458" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="450" count="0" type="stmt"/>
+        <line num="451" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="459" count="0" type="stmt"/>
+        <line num="460" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="461" count="0" type="stmt"/>
-        <line num="462" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="470" count="0" type="stmt"/>
-        <line num="471" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="463" count="0" type="stmt"/>
+        <line num="464" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="472" count="0" type="stmt"/>
+        <line num="473" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="474" count="0" type="stmt"/>
-        <line num="475" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="484" count="1" type="stmt"/>
-        <line num="485" count="1" type="stmt"/>
+        <line num="476" count="0" type="stmt"/>
+        <line num="477" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="486" count="1" type="stmt"/>
         <line num="487" count="1" type="stmt"/>
+        <line num="488" count="1" type="stmt"/>
         <line num="489" count="1" type="stmt"/>
-        <line num="494" count="0" type="stmt"/>
-        <line num="495" count="0" type="stmt"/>
-        <line num="500" count="1" type="stmt"/>
+        <line num="491" count="1" type="stmt"/>
+        <line num="496" count="0" type="stmt"/>
+        <line num="497" count="0" type="stmt"/>
+        <line num="502" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.delivery.providers">
@@ -802,9 +802,9 @@
       </file>
     </package>
     <package name="src.delivery.routes">
-      <metrics statements="40" coveredstatements="40" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+      <metrics statements="41" coveredstatements="41" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
       <file name="deliveryRoutes.js" path="D:\dev\razac_tookan\razac_tookan\src\delivery\routes\deliveryRoutes.js">
-        <metrics statements="40" coveredstatements="40" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <metrics statements="41" coveredstatements="41" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
         <line num="4" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
@@ -845,6 +845,7 @@
         <line num="189" count="1" type="stmt"/>
         <line num="195" count="1" type="stmt"/>
         <line num="201" count="1" type="stmt"/>
+        <line num="207" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.delivery.services">

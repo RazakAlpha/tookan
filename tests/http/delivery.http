@@ -130,6 +130,7 @@ Content-Type: application/json
 
 {
   "job_status": "1",
+  "job_type": "1",
   "start_date": "2026-04-01",
   "end_date": "2026-04-02",
   "is_pagination": 1,
@@ -141,7 +142,7 @@ POST {{base}}/api/delivery/tasks/details
 Content-Type: application/json
 
 {
-  "jobIds": ["5145"],
+  "jobIds": ["607646218"],
   "includeTaskHistory": 0,
   "jobAdditionalInfo": 1,
   "includeJobReport": 0
@@ -152,3 +153,14 @@ POST {{base}}/api/delivery/teams/list
 Content-Type: application/json
 
 {}
+
+### Reassign open tasks to agent — reassign_open_tasks (alias: /tasks/reassign-open)
+POST {{base}}/api/delivery/agents/reassign-open-tasks
+Content-Type: application/json
+
+{
+  "user_id": 12345,
+  "team_id": 1783512,
+  "fleet_id": 2202532,
+  "job_ids": [607894468]
+}
