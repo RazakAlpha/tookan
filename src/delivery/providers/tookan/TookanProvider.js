@@ -99,7 +99,7 @@ class TookanProvider extends DeliveryProvider {
       job_pickup_address: payload.pickup?.address || "",
       job_pickup_latitude: payload.pickup?.latitude?.toString() || "",
       job_pickup_longitude: payload.pickup?.longitude?.toString() || "",
-      job_pickup_datetime: payload.scheduledAt || this._nowFormatted(),
+      job_pickup_datetime: payload.pickupBefore || payload.scheduledAt || this._nowFormatted(),
       has_pickup: 1,
       has_delivery: 0,
       layout_type: 0,
@@ -133,7 +133,7 @@ class TookanProvider extends DeliveryProvider {
       customer_address: payload.customer?.address || "",
       latitude: payload.customer?.latitude?.toString() || "",
       longitude: payload.customer?.longitude?.toString() || "",
-      job_delivery_datetime: payload.scheduledAt || this._nowFormatted(),
+      job_delivery_datetime: payload.deliveryBefore || payload.scheduledAt || this._nowFormatted(),
       meta_data: payload.metadata || {},
       has_pickup: 0,
       has_delivery: 1,
@@ -367,8 +367,8 @@ class TookanProvider extends DeliveryProvider {
 
       // ─── Scheduling ──────────────────────────────────────────
       // Tookan accepts: "MM/DD/YYYY HH:mm" or "YYYY-MM-DD HH:mm:ss"
-      job_delivery_datetime: p.scheduledAt ? this._normalizeDatetime(p.scheduledAt) : now,
-      job_pickup_datetime: p.pickupAt ? this._normalizeDatetime(p.pickupAt) : now,
+      job_delivery_datetime: p.deliveryBefore ? this._normalizeDatetime(p.deliveryBefore) : now,
+      job_pickup_datetime: p.pickupBefore ? this._normalizeDatetime(p.pickupBefore) : now,
 
       // ─── Task type ───────────────────────────────────────────
       has_pickup: 1,

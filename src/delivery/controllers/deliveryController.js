@@ -33,7 +33,7 @@ const deliveryController = {
    */
   async dispatch(req, res) {
     try {
-      const { orderId, customer, pickup, notes, scheduledAt, pickupAt, store, options: opts } = req.body;
+      const { orderId, customer, pickup, notes, scheduledAt, pickupBefore, deliveryBefore, store, options: opts } = req.body;
 
       if (!customer) {
         return res.status(400).json(error("customer object is required", "MISSING_CUSTOMER"));
@@ -45,7 +45,7 @@ const deliveryController = {
         return res.status(400).json(error("pickup object is required", "MISSING_PICKUP"));
       }
 
-      const payload = { orderId, customer, pickup, notes, scheduledAt, pickupAt };
+      const payload = { orderId, customer, pickup, notes, scheduledAt, pickupBefore, deliveryBefore };
       const dispatchOptions = {
         skipValidation: opts?.skipValidation || false,
         skipServiceArea: opts?.skipServiceArea || false,
@@ -89,13 +89,13 @@ const deliveryController = {
    */
   async dispatchDeliveryOnly(req, res) {
     try {
-      const { orderId, customer, notes, scheduledAt, store, options: opts, metadata } = req.body;
+      const { orderId, customer, notes, scheduledAt, store, options: opts, metadata, deliveryBefore } = req.body;
 
       if (!customer) {
         return res.status(400).json(error("customer object is required", "MISSING_CUSTOMER"));
       }
 
-      const payload = { orderId, customer, notes, scheduledAt, metadata };
+      const payload = { orderId, customer, notes, scheduledAt, metadata, deliveryBefore };
       const dispatchOptions = {
         skipValidation: opts?.skipValidation || false,
         skipServiceArea: opts?.skipServiceArea || false,
@@ -127,13 +127,13 @@ const deliveryController = {
    */
   async dispatchPickupOnly(req, res) {
     try {
-      const { orderId, pickup, notes, scheduledAt } = req.body;
+      const { orderId, pickup, notes, scheduledAt, pickupBefore } = req.body;
 
       if (!pickup) {
         return res.status(400).json(error("pickup object is required", "MISSING_PICKUP"));
       }
 
-      const payload = { orderId, pickup, notes, scheduledAt };
+      const payload = { orderId, pickup, notes, scheduledAt, pickupBefore };
       const service = getDeliveryService();
       const result = await service.createPickupOnly(payload);
 
