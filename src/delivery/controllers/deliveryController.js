@@ -89,13 +89,13 @@ const deliveryController = {
    */
   async dispatchDeliveryOnly(req, res) {
     try {
-      const { orderId, customer, notes, scheduledAt, store, options: opts } = req.body;
+      const { orderId, customer, notes, scheduledAt, store, options: opts, metadata } = req.body;
 
       if (!customer) {
         return res.status(400).json(error("customer object is required", "MISSING_CUSTOMER"));
       }
 
-      const payload = { orderId, customer, notes, scheduledAt };
+      const payload = { orderId, customer, notes, scheduledAt, metadata };
       const dispatchOptions = {
         skipValidation: opts?.skipValidation || false,
         skipServiceArea: opts?.skipServiceArea || false,

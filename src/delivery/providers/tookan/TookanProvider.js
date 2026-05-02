@@ -92,7 +92,8 @@ class TookanProvider extends DeliveryProvider {
   async createPickupTask(payload) {
     const body = {
       order_id: payload.orderId || `ORD-${Date.now()}`,
-      job_description: payload.notes || "Pickup task",
+      job_description: payload.description || payload.notes || "Pickup task",
+      pickup_meta_data: payload.metadata || {},
       job_pickup_phone: payload.pickup?.phone || "",
       job_pickup_name: payload.pickup?.name || "Store",
       job_pickup_address: payload.pickup?.address || "",
@@ -125,7 +126,7 @@ class TookanProvider extends DeliveryProvider {
   async createDeliveryTask(payload) {
     const body = {
       order_id: payload.orderId || `ORD-${Date.now()}`,
-      job_description: payload.notes || "Delivery task",
+      job_description: payload.description || payload.notes || "Delivery task",
       customer_email: payload.customer?.email || "",
       customer_username: payload.customer?.name || "Customer",
       customer_phone: payload.customer?.phone || "",
@@ -133,6 +134,7 @@ class TookanProvider extends DeliveryProvider {
       latitude: payload.customer?.latitude?.toString() || "",
       longitude: payload.customer?.longitude?.toString() || "",
       job_delivery_datetime: payload.scheduledAt || this._nowFormatted(),
+      meta_data: payload.metadata || {},
       has_pickup: 0,
       has_delivery: 1,
       layout_type: 0,
